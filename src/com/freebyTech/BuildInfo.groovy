@@ -30,10 +30,10 @@ class BuildInfo implements Serializable {
         }
         else 
         {
-            steps.echo "Publishing to registry ${env.REGISTRY_URL}"
-            this.tag = "${env.REGISTRY_URL}/${repository}/${image}:${this.version}"
-            this.agentTag = "${env.REGISTRY_URL}/${repository}/${BuildConstants.DEFAULT_JENKINS_AGENT}"
-            this.registry = "https://${env.REGISTRY_URL}"
+            steps.echo "Publishing to registry ${steps.env.REGISTRY_URL}"
+            this.tag = "${steps.env.REGISTRY_URL}/${repository}/${image}:${this.version}"
+            this.agentTag = "${steps.env.REGISTRY_URL}/${repository}/${BuildConstants.DEFAULT_JENKINS_AGENT}"
+            this.registry = "https://${steps.env.REGISTRY_URL}"
         }        
     }
 }
