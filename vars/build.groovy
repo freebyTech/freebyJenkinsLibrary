@@ -8,7 +8,7 @@ BuildInfo call(String versionPrefix, String repository, String image, String doc
     String label = "worker-${UUID.randomUUID().toString()}"
     def registry = ''
     
-    buildInfo.determineVersionNumber(versionPrefix, repository, image)
+    buildInfo.determineBuildInfo(versionPrefix, repository, image)
     
     podTemplate( label: label,
         containers: 
