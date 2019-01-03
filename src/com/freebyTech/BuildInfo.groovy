@@ -2,7 +2,7 @@ package com.freebyTech
 
 import com.freebyTech.BuildConstants
 
-class BuildVersionInfo implements Serializable {
+class BuildInfo implements Serializable {
     String version
     String semVersion
     String tag
@@ -11,9 +11,9 @@ class BuildVersionInfo implements Serializable {
 
     private def steps
 
-    BuildVersionInfo(steps) { this.steps = steps }
+    BuildInfo(steps) { this.steps = steps }
 
-    def determineVersionNumber(String versionPrefix, String repository, String image) {
+    def determineBuildInfo(String versionPrefix, String repository, String image) {
         def date = new Date()
         //if(!steps.env.BRANCH_NAME?.trim() && (steps.env.BRANCH_NAME.equalsIgnoreCase("master") || steps.env.BRANCH_NAME.equalsIgnoreCase("develop")) {
             this.version = "${versionPrefix}.${steps.env.BUILD_NUMBER}.${date.format('MMdd')}"
