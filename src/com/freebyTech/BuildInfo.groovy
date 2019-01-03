@@ -10,14 +10,19 @@ class BuildInfo implements Serializable {
     String registry
 
     private def steps
+    private def script
 
-    BuildInfo(steps) { this.steps = steps }
+    BuildInfo(steps, script) 
+    { 
+        this.steps = steps
+        this.script = script
+    }
 
     def determineBuildInfo(String versionPrefix, String repository, String image) {
         def date = new Date()
-        //if(!steps.env.BRANCH_NAME?.trim() && (steps.env.BRANCH_NAME.equalsIgnoreCase("master") || steps.env.BRANCH_NAME.equalsIgnoreCase("develop")) {
-            this.version = "${versionPrefix}.${steps.env.BUILD_NUMBER}.${date.format('MMdd')}"
-            this.semVersion = "${versionPrefix}.${steps.env.BUILD_NUMBER}"
+        //if(!script.env.BRANCH_NAME?.trim() && (script.env.BRANCH_NAME.equalsIgnoreCase("master") || script.env.BRANCH_NAME.equalsIgnoreCase("develop")) {
+            this.version = "${versionPrefix}.${script.env.BUILD_NUMBER}.${date.format('MMdd')}"
+            this.semVersion = "${versionPrefix}.${script.env.BUILD_NUMBER}"
         //}  
 
         // Standard Docker Registry or custom docker registry?
@@ -30,10 +35,10 @@ class BuildInfo implements Serializable {
         }
         else 
         {
-            steps.echo "Publishing to registry ${steps.env.REGISTRY_URL}"
-            this.tag = "${steps.env.REGISTRY_URL}/${repository}/${image}:${this.version}"
-            this.agentTag = "${steps.env.REGISTRY_URL}/${repository}/${BuildConstants.DEFAULT_JENKINS_AGENT}"
-            this.registry = "https://${steps.env.REGISTRY_URL}"
+            steps.echo "Publishing to registry ${script.env.REGISTRY_URL}"
+            this.tag = "${script.env.REGISTRY_URL}/${repository}/${image}:${this.version}"
+            this.agentTag = "${script.env.REGISTRY_URL}/${repository}/${BuildConstants.DEFAULT_JENKINS_AGENT}"
+            this.registry = "https://${script.env.REGISTRY_URL}"
         }        
     }
 }

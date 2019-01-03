@@ -1,14 +1,14 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 
-BuildInfo call(String versionPrefix, String repository, String image, String dockerBuildArguments, Boolean helmChartBuild) 
+BuildInfo call(def script, String versionPrefix, String repository, String image, String dockerBuildArguments, Boolean helmChartBuild) 
 {
     BuildInfo buildInfo = new BuildInfo(steps)
 
     String label = "worker-${UUID.randomUUID().toString()}"
     def registry = ''
     
-    buildInfo.determineBuildInfo(versionPrefix, repository, image)
+    buildInfo.determineBuildInfo(script, versionPrefix, repository, image)
     
     podTemplate( label: label,
         containers: 
