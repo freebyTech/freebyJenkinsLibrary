@@ -76,4 +76,5 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
             }         
         }
     }
+    return buildInfo
 }
