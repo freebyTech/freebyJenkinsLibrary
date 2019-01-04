@@ -1,7 +1,7 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 
-void call(def script, String image, String namespaceList) 
+void call(String image, String namespaceList) 
 {
     stage("Get Approval for Deployment")
     {
@@ -12,7 +12,7 @@ void call(def script, String image, String namespaceList)
         {
             script 
             {
-                script.env.NAMESPACE = input message: "Deploy ${image} to a specified namespace?", ok: 'Select',
+                env.NAMESPACE = input message: "Deploy ${image} to a specified namespace?", ok: 'Select',
                 parameters: [choice(name: 'NAMESPACE', choices: namespaceList, description: "Whether or not to deploy the ${image} to a namespace")]
             }
         }
