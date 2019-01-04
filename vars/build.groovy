@@ -6,7 +6,6 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
     String label = "worker-${UUID.randomUUID().toString()}"
-    def registry = ''
     
     buildInfo.determineBuildInfo(versionPrefix, repository, image)
     
@@ -37,7 +36,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                     checkout scm
 
                     // Use guid of known user for registry security
-                    docker.withRegistry(registry, BuildConstants.REGISTRY_USER_GUID) 
+                    docker.withRegistry(buildInfo.registry, BuildConstants.REGISTRY_USER_GUID) 
                     {
                         def app
                         if(docker_build_arguments=='') 
