@@ -32,7 +32,7 @@ void call(BuildInfo buildInfo, String repository, String image)
                             helm init --client-only
                             helm plugin install https://github.com/chartmuseum/helm-push
                             helm repo add --username ${REGISTRY_USER} --password ${REGISTRY_USER_PASSWORD} ${REPOSITORY} https://${REGISTRY_URL}/chartrepo/${REPOSITORY}
-                            helm upgrade --install --namespace ${NAMESPACE} ${IMAGE} $REPOSITORY/${IMAGE} --version ${VERSION}
+                            helm upgrade --install --namespace ${NAMESPACE} ${IMAGE} $REPOSITORY/${IMAGE} --version ${VERSION} --set image.tag=${IMAGEVERSION}
                             '''
                         }
                     }
