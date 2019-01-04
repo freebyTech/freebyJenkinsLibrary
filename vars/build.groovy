@@ -41,11 +41,11 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         def app
                         if(dockerBuildArguments=='') 
                         {
-                            app = docker.build(tag, "./src")
+                            app = docker.build(buildInfo.tag, "./src")
                         }
                         else 
                         {
-                            app = docker.build(tag,"--build-arg ${dockerBuildArguments} ./src")
+                            app = docker.build(buildInfo.tag,"--build-arg ${dockerBuildArguments} ./src")
                         }
                         app.push()
                         if("develop".equalsIgnoreCase(script.env.BRANCH_NAME)) 
