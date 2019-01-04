@@ -26,7 +26,7 @@ class BuildInfo implements Serializable {
         //}  
 
         // Standard Docker Registry or custom docker registry?
-        if('index.docker.io'.equalsIgnoreCase(env.REGISTRY_URL)) 
+        if('index.docker.io'.equalsIgnoreCase(script.env.REGISTRY_URL)) 
         {
             steps.echo 'Publishing to standard docker registry.'
             this.tag = "${repository}/${image}:${this.version}"
