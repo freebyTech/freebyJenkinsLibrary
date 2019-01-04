@@ -4,7 +4,7 @@ import com.freebyTech.BuildConstants
 
 class BuildInfo implements Serializable {
     String version
-    String semVersion
+    String semanticVersion
     String tag
     String agentTag
     String registry
@@ -22,7 +22,7 @@ class BuildInfo implements Serializable {
         def date = new Date()
         //if(!script.env.BRANCH_NAME?.trim() && (script.env.BRANCH_NAME.equalsIgnoreCase("master") || script.env.BRANCH_NAME.equalsIgnoreCase("develop")) {
             this.version = "${versionPrefix}.${script.env.BUILD_NUMBER}.${date.format('MMdd')}"
-            this.semVersion = "${versionPrefix}.${script.env.BUILD_NUMBER}"
+            this.semanticVersion = "${versionPrefix}.${script.env.BUILD_NUMBER}"
         //}  
 
         // Standard Docker Registry or custom docker registry?

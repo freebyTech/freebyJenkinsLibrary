@@ -39,7 +39,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                     docker.withRegistry(buildInfo.registry, BuildConstants.REGISTRY_USER_GUID) 
                     {
                         def app
-                        if(docker_build_arguments=='') 
+                        if(dockerBuildArguments=='') 
                         {
                             app = docker.build(tag, "./src")
                         }
@@ -48,7 +48,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                             app = docker.build(tag,"--build-arg ${dockerBuildArguments} ./src")
                         }
                         app.push()
-                        if("develop".equalsIgnoreCase(env.BRANCH_NAME)) 
+                        if("develop".equalsIgnoreCase(script.env.BRANCH_NAME)) 
                         {
                             app.push('latest')
                         }          
@@ -56,7 +56,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
 
                     if(helmChartBuild) 
                     {
-                        withEnv(["APPVERSION=${version}", "VERSION=${semVersion}", "REPOSITORY=${repository}", "IMAGE=${image}"])
+                        withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE=${image}"])
                         {
                             // Need registry credentials for agent build operation to setup chart museum connection.
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: BuildConstants.REGISTRY_USER_GUID,
