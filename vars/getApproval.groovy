@@ -12,7 +12,7 @@ void call(def script, String image, String namespaceList)
         {
             script 
             {
-                env.NAMESPACE = input message: "Deploy ${image} to a specified namespace?", ok: 'Select',
+                script.env.NAMESPACE = input message: "Deploy ${image} to a specified namespace?", ok: 'Select',
                 parameters: [choice(name: 'NAMESPACE', choices: namespaceList, description: "Whether or not to deploy the ${image} to a namespace")]
             }
         }
