@@ -1,8 +1,10 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 
-BuildInfo call(def script, BuildInfo buildInfo, String repository, String image) 
+void call(BuildInfo buildInfo, String repository, String image) 
 {
+    String label = "worker-${UUID.randomUUID().toString()}"
+    
     podTemplate( label: label,
         containers: 
         [

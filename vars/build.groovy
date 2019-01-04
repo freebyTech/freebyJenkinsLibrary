@@ -24,7 +24,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
             stage('Setup Build Settings') 
             {
                 echo '--------------------------------------------------'
-                echo "Building version ${buildInfo.version} for branch ${script.env.BRANCH_NAME}"
+                echo "Building version ${buildInfo.version} for branch ${env.BRANCH_NAME}"
                 echo '--------------------------------------------------'          
                 currentBuild.displayName = "# " + buildInfo.version
             }
@@ -48,7 +48,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                             app = docker.build(buildInfo.tag,"--build-arg ${dockerBuildArguments} ./src")
                         }
                         app.push()
-                        if("develop".equalsIgnoreCase(script.env.BRANCH_NAME)) 
+                        if("develop".equalsIgnoreCase(env.BRANCH_NAME)) 
                         {
                             app.push('latest')
                         }          
