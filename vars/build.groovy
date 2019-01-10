@@ -2,7 +2,7 @@ import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 import com.freebyTech.NugetPushOptionEnum
 
-BuildInfo call(def script, String versionPrefix, String repository, String imageName, String dockerBuildArguments, Boolean registryPublish, Boolean helmBuildChart, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '') 
+BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArgument, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '') 
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
@@ -42,11 +42,11 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         def img
                         if(dockerBuildArguments=='') 
                         {
-                            img = docker.build(buildInfo.tag, "--build-arg BUILD_VERSION=${buildInfo.version} PACKAGE_ID=${nugetPackageId} ./src")
+                            img = docker.build(buildInfo.tag, "--build-arg BUILD_VERSION=${buildInfo.version} --build-arg PACKAGE_ID=${nugetPackageId} ./src")
                         }
                         else 
                         {
-                            img = docker.build(buildInfo.tag,"--build-arg BUILD_VERSION=${buildInfo.version} PACKAGE_ID=${nugetPackageId} ${dockerBuildArguments} ./src")
+                            img = docker.build(buildInfo.tag,"--build-arg BUILD_VERSION=${buildInfo.version}--build-arg PACKAGE_ID=${nugetPackageId} --build-arg ${extraDockerBuildArgument} ./src")
                         }
                         if(registryPublish) {
                             img.push()
