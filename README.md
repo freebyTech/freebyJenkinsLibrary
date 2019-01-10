@@ -1,6 +1,6 @@
 # freebyJenkinsLibrary
 
-The Jenkins global library for use by freebyTech jenkins servers.
+The Jenkins global library for use by freebyTech jenkins servers for streamlining jenkins build pipeline files with know custom steps.
 
 For more information on shared libaries see:
 
