@@ -40,7 +40,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                     docker.withRegistry(buildInfo.registry, env.REGISTRY_USER_ID) 
                     {
                         def img
-                        if(dockerBuildArguments=='') 
+                        if(extraDockerBuildArgument=='') 
                         {
                             img = docker.build(buildInfo.tag, "--build-arg BUILD_VERSION=${buildInfo.version} --build-arg PACKAGE_ID=${nugetPackageId} ./src")
                         }
@@ -59,12 +59,13 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
                             img.inside {
                                 sh 'cd /lib/nuget'
-                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}"
+                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version} -k ${env.NUGET_API_KEY}"
                             }
                         }
-                        else if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
+                        else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
                             img.inside {
-
+                                sh 'cd /lib/nuget_d'
+                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version} -k ${env.NUGET_API_KEY}"
                             }
                         }             
                     }
