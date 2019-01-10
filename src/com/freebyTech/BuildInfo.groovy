@@ -26,18 +26,18 @@ class BuildInfo implements Serializable {
         //}  
 
         // Standard Docker Registry or custom docker registry?
-        if('index.docker.io'.equalsIgnoreCase(script.env.REGISTRY_URL)) 
+        if(BuildConstants.DEFAULT_DOCKER_REGISTRY.equalsIgnoreCase(script.env.REGISTRY_URL)) 
         {
             steps.echo 'Publishing to standard docker registry.'
             this.tag = "${repository}/${image}:${this.version}"
-            this.agentTag = "${repository}/${BuildConstants.DEFAULT_JENKINS_AGENT}"
+            this.agentTag = "${repository}/${script.env.AGENT_IMAGE}"
             this.regsitry = ''
         }
         else 
         {
             steps.echo "Publishing to registry ${script.env.REGISTRY_URL}"
             this.tag = "${script.env.REGISTRY_URL}/${repository}/${image}:${this.version}"
-            this.agentTag = "${script.env.REGISTRY_URL}/${repository}/${BuildConstants.DEFAULT_JENKINS_AGENT}"
+            this.agentTag = "${script.env.REGISTRY_URL}/${repository}/${script.env.AGENT_IMAGE}"
             this.registry = "https://${script.env.REGISTRY_URL}"
         }        
     }
