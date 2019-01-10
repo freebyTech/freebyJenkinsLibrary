@@ -78,12 +78,18 @@ In order to properly support build versioning and also nuget package pushes the 
     <Version Condition=" '$(BUILD_VERSION)' != '' ">$(BUILD_VERSION)</Version>
 
     <!-- NuGet Package ID -->
-    <PackageId Condition=" '$(PACKAGE_ID)' == '' ">[some default name]</PackageId>
+    <PackageId Condition=" '$(PACKAGE_ID)' == '' ">[some default nuget package name]</PackageId>
     <PackageId Condition=" '$(PACKAGE_ID)' != '' ">$(PACKAGE_ID)</PackageId>
   </PropertyGroup>
 ```
 
-```BUILD_VERSION``` and ```PACKAGE_ID``` will be defined during the docker build operation. ```PACKAGE_ID``` is only used in NuGet package pack and publish operations.
+```BUILD_VERSION``` and ```PACKAGE_ID``` will be defined during the docker build operation.
+
+```PACKAGE_ID``` is defined from ```nugetPackageId``` and is only used in NuGet package pack and publish operations.
+```BUILD_VERSION``` is defined automatically based upon the following format:
+```groovy
+BuildInfo.version = "${versionPrefix}.${script.env.BUILD_NUMBER}.${date.format('MMdd')}"
+```
 
 ### .NET Core Class Library Build Output
 
