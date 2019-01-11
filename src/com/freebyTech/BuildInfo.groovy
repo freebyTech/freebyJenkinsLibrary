@@ -20,9 +20,13 @@ class BuildInfo implements Serializable {
 
     def determineBuildInfo(String versionPrefix, String repository, String image) {
         def date = new Date()
+        def verDate = ${date.format('MMdd')}
+        if(verDate.getAt(0) == '0') {
+            verDate = verDate.substring(1)
+        }
         //if(!script.env.BRANCH_NAME?.trim() && (script.env.BRANCH_NAME.equalsIgnoreCase("master") || script.env.BRANCH_NAME.equalsIgnoreCase("develop")) {
-            this.version = "${versionPrefix}.${script.env.BUILD_NUMBER}.${date.format('MMdd')}"
-            this.semanticVersion = "${versionPrefix}.${script.env.BUILD_NUMBER}"
+        this.version = "${versionPrefix}.${script.env.BUILD_NUMBER}.${verDate}"
+        this.semanticVersion = "${versionPrefix}.${script.env.BUILD_NUMBER}"
         //}  
 
         // Standard Docker Registry or custom docker registry?

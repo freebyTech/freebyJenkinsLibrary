@@ -61,14 +61,18 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                             if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
                                 img.inside {
                                     sh '''
+                                    set +x
                                     dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://www.nuget.org/
+                                    set -x
                                     '''
                                 }
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
                                 img.inside {
                                     sh '''
+                                    set +x
                                     dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://www.nuget.org/
+                                    set -x
                                     '''
                                 }
                             }
