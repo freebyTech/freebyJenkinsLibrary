@@ -55,19 +55,20 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 img.push('latest')
                             }
                         }
-                        //TODO: In the future support -s and -ss options for private nuget server.
-                        if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
-                            img.inside {
-                                sh 'cd /lib/nuget'
-                                // TODO: Don't waant to expose API key, will have to have a better mechanism in the future.
-                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k ${env.NUGET_API_KEY} -s https://nuget.org/ > /dev/null"
+                        withEnv(["NUGET_API_KEY=${env.NUGET_API_KEY}"])
+                        {
+                            //TODO: In the future support -s and -ss options for private nuget server.
+                            if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
+                                img.inside {
+                                    sh 'cd /lib/nuget'
+                                    sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k \$NUGET_API_KEY -s https://nuget.org/"
+                                }
                             }
-                        }
-                        else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
-                            img.inside {
-                                sh 'cd /lib/nuget_d'
-                                // TODO: Don't waant to expose API key, will have to have a better mechanism in the future.
-                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k ${env.NUGET_API_KEY} -s https://nuget.org/ > /dev/null"
+                            else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
+                                img.inside {
+                                    sh 'cd /lib/nuget_d'
+                                    sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k \$NUGET_API_KEY -s https://nuget.org/ > /dev/null"
+                                }
                             }
                         }             
                     }
