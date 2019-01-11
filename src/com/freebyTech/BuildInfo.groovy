@@ -20,7 +20,7 @@ class BuildInfo implements Serializable {
 
     def determineBuildInfo(String versionPrefix, String repository, String image) {
         def date = new Date()
-        def verDate = ${date.format('MMdd')}
+        def verDate = date.format('MMdd')
         if(verDate.getAt(0) == '0') {
             verDate = verDate.substring(1)
         }
