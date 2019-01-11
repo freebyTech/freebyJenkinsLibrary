@@ -59,13 +59,15 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
                             img.inside {
                                 sh 'cd /lib/nuget'
-                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version} -k ${env.NUGET_API_KEY}"
+                                // TODO: Don't waant to expose API key, will have to have a better mechanism in the future.
+                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k ${env.NUGET_API_KEY} -s https://nuget.org/ > /dev/null"
                             }
                         }
                         else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
                             img.inside {
                                 sh 'cd /lib/nuget_d'
-                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version} -k ${env.NUGET_API_KEY}"
+                                // TODO: Don't waant to expose API key, will have to have a better mechanism in the future.
+                                sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k ${env.NUGET_API_KEY} -s https://nuget.org/ > /dev/null"
                             }
                         }             
                     }
