@@ -55,19 +55,19 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 img.push('latest')
                             }
                         }
-                        withEnv(["NUGET_API_KEY=${env.NUGET_API_KEY}"])
+                        withEnv(["NUGET_API=${env.NUGET_API_KEY}"])
                         {
                             //TODO: In the future support -s and -ss options for private nuget server.
                             if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
                                 img.inside {
                                     sh 'cd /lib/nuget'
-                                    sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k \$NUGET_API_KEY -s https://nuget.org/"
+                                    sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k \$NUGET_API -s https://www.nuget.org/"
                                 }
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
                                 img.inside {
                                     sh 'cd /lib/nuget_d'
-                                    sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k \$NUGET_API_KEY -s https://nuget.org/ > /dev/null"
+                                    sh "dotnet nuget push ${nugetPackageId}.${buildInfo.version}.nupkg -k \$NUGET_API -s https://www.nuget.org/"
                                 }
                             }
                         }             
