@@ -1,6 +1,6 @@
 package com.freebyTech
 
-public enum NugetPushOptionEnum {
+public enum NugetPushOptionEnum implements Serializable {
     NoPush,
     PushRelease,
     PushDebug
