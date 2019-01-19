@@ -34,14 +34,14 @@ class BuildInfo implements Serializable {
         {
             steps.echo 'Publishing to standard docker registry.'
             this.tag = "${repository}/${image}:${this.version}"
-            this.agentTag = "${repository}/${script.env.AGENT_IMAGE}"
+            this.agentTag = "freebytech-pub/${script.env.AGENT_IMAGE}"
             this.regsitry = ''
         }
         else 
         {
             steps.echo "Publishing to registry ${script.env.REGISTRY_URL}"
             this.tag = "${script.env.REGISTRY_URL}/${repository}/${image}:${this.version}"
-            this.agentTag = "${script.env.REGISTRY_URL}/${repository}/${script.env.AGENT_IMAGE}"
+            this.agentTag = "${script.env.REGISTRY_URL}/freebytech-pub/${script.env.AGENT_IMAGE}"
             this.registry = "https://${script.env.REGISTRY_URL}"
         }        
     }
