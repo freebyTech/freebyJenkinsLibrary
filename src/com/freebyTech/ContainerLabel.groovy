@@ -7,7 +7,7 @@ class ContainerLabel implements Serializable {
 
     ContainerLabel(String opDescription, String image) 
     { 
-        String label = "${opDescription}-${image}-${UUID.randomUUID().toString()}"
+        label = "${opDescription}-${image}-${UUID.randomUUID().toString()}"
         if(label.length() > 63) 
         {
             label = label.substring(0, 63)
