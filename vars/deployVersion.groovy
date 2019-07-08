@@ -5,7 +5,7 @@ void call(def script, String version, String repository, String imageName, Strin
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
-    String label = "deployver-${imageName}-${UUID.randomUUID().toString()}"
+    String label = new ContainerLabel("deployv", imageName).label
     
     buildInfo.determineBuildInfoFromPassedVersion(version, repository, imageName)
 

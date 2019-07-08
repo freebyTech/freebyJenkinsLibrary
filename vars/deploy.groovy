@@ -3,7 +3,7 @@ import com.freebyTech.BuildConstants
 
 void call(BuildInfo buildInfo, String repository, String imageName) 
 {
-    String label = "deploy-${imageName}-${UUID.randomUUID().toString()}"
+    String label = new ContainerLabel("deploy", imageName).label
     
     podTemplate( label: label,
         containers: 
