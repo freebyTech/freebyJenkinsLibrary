@@ -1,7 +1,7 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 
-void call(def script, String version, String repository, String imageName, String repository, String imageName) 
+void call(def script, String version, String repository, String imageName) 
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
