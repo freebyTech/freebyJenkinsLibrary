@@ -1,7 +1,7 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 
-void call(def script, String version, String repository, String imageName) 
+void call(def script, String version, String repository, String imageName, String namespace) 
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
@@ -26,7 +26,7 @@ void call(def script, String version, String repository, String imageName)
             {      
                 container('freeby-agent') 
                 {
-                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}"])
+                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "NAMESPACE=${namespace}"])
                     {
                         // Need registry credentials for agent build operation to setup chart museum connection.
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
