@@ -1,6 +1,7 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 import com.freebyTech.NugetPushOptionEnum
+import com.freebyTech.ContainerLabel
 
 BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArgument, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '') 
 {

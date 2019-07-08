@@ -1,5 +1,6 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
+import com.freebyTech.ContainerLabel
 
 void call(BuildInfo buildInfo, String repository, String imageName) 
 {
