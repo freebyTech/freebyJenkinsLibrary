@@ -6,7 +6,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
-    String label = "worker-${UUID.randomUUID().toString()}"
+    String label = "build-${imageName}-${UUID.randomUUID().toString()}"
     
     buildInfo.determineBuildInfo(versionPrefix, repository, imageName)
     

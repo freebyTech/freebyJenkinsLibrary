@@ -45,4 +45,26 @@ class BuildInfo implements Serializable {
             this.registry = "https://${script.env.REGISTRY_URL}"
         }        
     }
+
+    def determineBuildInfoFromPassedVersion(String version, String repository, String image) {
+        this.version = version;
+        this.semanticVersion = version.substring(0, version.lastIndexOf("."));
+        //}  
+
+        // Standard Docker Registry or custom docker registry?
+        if(BuildConstants.DEFAULT_DOCKER_REGISTRY.equalsIgnoreCase(script.env.REGISTRY_URL)) 
+        {
+            steps.echo 'Publishing to standard docker registry.'
+            this.tag = "${repository}/${image}:${this.version}"
+            this.agentTag = "freebytech-pub/${script.env.AGENT_IMAGE}"
+            this.regsitry = ''
+        }
+        else 
+        {
+            steps.echo "Publishing to registry ${script.env.REGISTRY_URL}"
+            this.tag = "${script.env.REGISTRY_URL}/${repository}/${image}:${this.version}"
+            this.agentTag = "${script.env.REGISTRY_URL}/freebytech-pub/${script.env.AGENT_IMAGE}"
+            this.registry = "https://${script.env.REGISTRY_URL}"
+        }        
+    }
 }

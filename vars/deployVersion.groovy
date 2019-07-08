@@ -1,10 +1,14 @@
 import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 
-void call(BuildInfo buildInfo, String repository, String imageName) 
+void call(def script, String version, String repository, String imageName, String repository, String imageName) 
 {
-    String label = "deploy-${imageName}-${UUID.randomUUID().toString()}"
+    BuildInfo buildInfo = new BuildInfo(steps, script)
+
+    String label = "deployver-${imageName}-${UUID.randomUUID().toString()}"
     
+    buildInfo.determineBuildInfo(version, repository, imageName)
+
     podTemplate( label: label,
         containers: 
         [
@@ -18,7 +22,7 @@ void call(BuildInfo buildInfo, String repository, String imageName)
     {
         node(label)
         {
-            stage("Overwrite ${imageName}")
+            stage("Deploy ${imageName}")
             {      
                 container('freeby-agent') 
                 {
