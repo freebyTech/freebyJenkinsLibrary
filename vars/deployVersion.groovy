@@ -7,7 +7,7 @@ void call(def script, String version, String repository, String imageName)
 
     String label = "deployver-${imageName}-${UUID.randomUUID().toString()}"
     
-    buildInfo.determineBuildInfo(version, repository, imageName)
+    buildInfo.determineBuildInfoFromPassedVersion(version, repository, imageName)
 
     podTemplate( label: label,
         containers: 
