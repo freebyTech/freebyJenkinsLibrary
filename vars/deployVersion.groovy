@@ -40,7 +40,7 @@ void call(def script, String version, String repository, String imageName, Strin
                                 helm init --client-only
                                 helm plugin install https://github.com/chartmuseum/helm-push
                                 helm repo add --username ${REGISTRY_USER} --password ${REGISTRY_USER_PASSWORD} ${REPOSITORY} https://${REGISTRY_URL}/chartrepo/${REPOSITORY}
-                                helm delete ${NS}-${IMAGE_NAME} --purge
+                                helm delete ${NS}-${IMAGE_NAME} --purge 2> /dev/null
                                 helm upgrade --install --namespace ${NS} ${NS}-${IMAGE_NAME} $REPOSITORY/${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION}
                                 '''
                             }
