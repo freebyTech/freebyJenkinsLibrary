@@ -2,7 +2,7 @@ import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 import com.freebyTech.ContainerLabel
 
-void call(def script, String version, String repository, String imageName, String ns) 
+void call(def script, String version, String repository, String imageName, String ns, Boolean purgePrevious = false) 
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
@@ -33,12 +33,26 @@ void call(def script, String version, String repository, String imageName, Strin
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
                         usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_USER_PASSWORD']])
                         {
-                            sh '''
-                            helm init --client-only
-                            helm plugin install https://github.com/chartmuseum/helm-push
-                            helm repo add --username ${REGISTRY_USER} --password ${REGISTRY_USER_PASSWORD} ${REPOSITORY} https://${REGISTRY_URL}/chartrepo/${REPOSITORY}
-                            helm upgrade --install --namespace ${NS} ${NS}-${IMAGE_NAME} $REPOSITORY/${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION}
-                            '''
+                            // Can be necessary if previous label selectors had version information in them.
+                            if(purgePrevious)
+                            {
+                                sh '''
+                                helm init --client-only
+                                helm plugin install https://github.com/chartmuseum/helm-push
+                                helm repo add --username ${REGISTRY_USER} --password ${REGISTRY_USER_PASSWORD} ${REPOSITORY} https://${REGISTRY_URL}/chartrepo/${REPOSITORY}
+                                helm delete ${NS}-${IMAGE_NAME} --purge
+                                helm upgrade --install --namespace ${NS} ${NS}-${IMAGE_NAME} $REPOSITORY/${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION}
+                                '''
+                            }
+                            else
+                            {
+                                sh '''
+                                helm init --client-only
+                                helm plugin install https://github.com/chartmuseum/helm-push
+                                helm repo add --username ${REGISTRY_USER} --password ${REGISTRY_USER_PASSWORD} ${REPOSITORY} https://${REGISTRY_URL}/chartrepo/${REPOSITORY}
+                                helm upgrade --install --namespace ${NS} ${NS}-${IMAGE_NAME} $REPOSITORY/${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION}
+                                '''
+                            }
                         }
                     }
                 }
