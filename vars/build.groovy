@@ -91,7 +91,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 sh '''
                                 cd ./deploy/${IMAGE_NAME}
                                 helm chart save . ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
-                                echo ${REGISTRY_USER_PASSWORD} | helm login ${REGISTRY_URL} --username ${REGISTRY_USER} --password-stdin
+                                echo ${REGISTRY_USER_PASSWORD} | helm registry login ${REGISTRY_URL} --username ${REGISTRY_USER} --password-stdin
                                 helm push ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 '''
                             }
