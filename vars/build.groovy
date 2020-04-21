@@ -86,14 +86,13 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         {
                             // Need registry credentials for agent build operation to setup chart museum connection.
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
-                            usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_USER_PASSWORD']])
+                                    usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_USER_PASSWORD']])
                             {
                                 sh '''
-                                helm init --client-only
-                                helm plugin install https://github.com/chartmuseum/helm-push --version=0.7.1
-                                helm repo add --username ${REGISTRY_USER} --password ${REGISTRY_USER_PASSWORD} $REPOSITORY https://${REGISTRY_URL}/chartrepo/${REPOSITORY}
-                                helm package --app-version ${APPVERSION} --version $VERSION ./deploy/${IMAGE_NAME}
-                                helm push ${IMAGE_NAME}-${VERSION}.tgz ${REPOSITORY}
+                                cd ./deploy/${IMAGE_NAME}
+                                helm chart save . ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
+                                echo ${REGISTRY_USER_PASSWORD} | helm login ${REGISTRY_URL} --username ${REGISTRY_USER} --password-stdin
+                                helm push${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 '''
                             }
                         }
