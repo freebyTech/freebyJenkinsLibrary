@@ -39,7 +39,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
                                 set +e
                                 helm delete --namespace ${NAMESPACE}
                                 set -e
-                                helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} .
+                                helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} .
                                 '''
                             } 
                             else 
@@ -49,7 +49,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
                                 helm chart pull ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 helm chart export ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION} --destination ./deploy
                                 cd ./deploy/${IMAGE_NAME}
-                                helm upgrade --install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} .
+                                helm upgrade --install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} .
                                 '''
                             }
                         }
