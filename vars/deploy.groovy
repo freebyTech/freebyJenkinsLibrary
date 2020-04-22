@@ -37,11 +37,11 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
                                 helm chart export ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION} --destination ./deploy
                                 cd ./deploy/${IMAGE_NAME}
                                 set +e
-                                helm delete --namespace ${NAMESPACE}
-                                set -e
+                                helm delete --namespace ${NAMESPACE}                                
                                 helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set ingress.hosts={ ${HOST_URL} } \
-                                    --set ingress.tls.hosts={ ${HOST_URL} } --set virtualService.hosts { ${HOST_URL} } .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set ingress.hosts={ '${HOST_URL}' } \
+                                    --set ingress.tls.hosts={ '${HOST_URL}' } --set virtualService.hosts { '${HOST_URL}' } --debug .
+                                set -e
                                 '''
                             } 
                             else 
@@ -51,9 +51,11 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
                                 helm chart pull ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 helm chart export ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION} --destination ./deploy
                                 cd ./deploy/${IMAGE_NAME}
+                                set +e
                                 helm upgrade --install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set ingress.hosts={ ${HOST_URL} } \
-                                    --set ingress.tls.hosts={ ${HOST_URL} } --set virtualService.hosts { ${HOST_URL} } .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set ingress.hosts={ '${HOST_URL}' } \
+                                    --set ingress.tls.hosts={ '${HOST_URL}' } --set virtualService.hosts { '${HOST_URL}' } --debug .
+                                set -e
                                 '''
                             }
                         }
