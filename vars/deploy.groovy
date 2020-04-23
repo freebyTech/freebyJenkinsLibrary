@@ -2,7 +2,7 @@ import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 import com.freebyTech.ContainerLabel
 
-void call(BuildInfo buildInfo, String repository, String imageName, Boolean purgePrevious = false, String virtualServiceGateway, String virtualServiceHostName) 
+void call(BuildInfo buildInfo, String repository, String imageName, String virtualServiceGateway, String virtualServiceHostName, Boolean purgePrevious = false) 
 {
     String label = new ContainerLabel("deploy", imageName).label
     
@@ -37,7 +37,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
                                 helm chart export ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION} --destination ./deploy
                                 cd ./deploy/${IMAGE_NAME}
                                 set +e
-                                helm delete --namespace ${NAMESPACE}                                
+                                helm delete --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME}                             
                                 helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
                                     --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${HOST_URL}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
                                 set -e
