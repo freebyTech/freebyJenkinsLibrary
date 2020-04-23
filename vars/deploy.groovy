@@ -23,7 +23,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String virtu
             {      
                 container('freeby-agent') 
                 {
-                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "VS_HOSTS=${virtualServiceHostName}", "VS_GATEWAY=${virtualServiceGateway}"])
+                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "VS_HOSTNAME=${virtualServiceHostName}", "VS_GATEWAY=${virtualServiceGateway}"])
                     {
                         // Need registry credentials for agent build operation to setup chart museum connection.
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
@@ -39,7 +39,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String virtu
                                 set +e
                                 helm delete --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME}                             
                                 helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${HOST_URL}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${VS_HOSTNAME}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
                                 set -e
                                 '''
                             } 
@@ -52,7 +52,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String virtu
                                 cd ./deploy/${IMAGE_NAME}
                                 set +e
                                 helm upgrade --install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${HOST_URL}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${VS_HOSTNAME}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
                                 set -e
                                 '''
                             }
