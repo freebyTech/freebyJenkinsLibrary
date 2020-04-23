@@ -2,7 +2,7 @@ import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 import com.freebyTech.ContainerLabel
 
-void call(BuildInfo buildInfo, String repository, String imageName, Boolean purgePrevious = false, String hostUrl) 
+void call(BuildInfo buildInfo, String repository, String imageName, Boolean purgePrevious = false, String virtualServiceGateway, String virtualServiceHostName) 
 {
     String label = new ContainerLabel("deploy", imageName).label
     
@@ -23,7 +23,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
             {      
                 container('freeby-agent') 
                 {
-                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "HOST_URL=${hostUrl}"])
+                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "VS_HOSTS=${virtualServiceHostName}", "VS_GATEWAY=${virtualServiceGateway}"])
                     {
                         // Need registry credentials for agent build operation to setup chart museum connection.
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
@@ -39,8 +39,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
                                 set +e
                                 helm delete --namespace ${NAMESPACE}                                
                                 helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set ingress.hosts={ '${HOST_URL}' } \
-                                    --set ingress.tls.hosts={ '${HOST_URL}' } --set virtualService.hosts { '${HOST_URL}' } --debug .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${HOST_URL}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
                                 set -e
                                 '''
                             } 
@@ -53,8 +52,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, Boolean purg
                                 cd ./deploy/${IMAGE_NAME}
                                 set +e
                                 helm upgrade --install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set ingress.hosts={ '${HOST_URL}' } \
-                                    --set ingress.tls.hosts={ '${HOST_URL}' } --set virtualService.hosts { '${HOST_URL}' } --debug .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${HOST_URL}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
                                 set -e
                                 '''
                             }
