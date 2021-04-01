@@ -47,7 +47,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         }
                         else 
                         {
-                            img = docker.build(buildInfo.tag,"--build-arg BUILD_VERSION=${buildInfo.version}--build-arg PACKAGE_ID=${nugetPackageId} --build-arg ${extraDockerBuildArgument} ./src")
+                            img = docker.build(buildInfo.tag,"--build-arg BUILD_VERSION=${buildInfo.version} --build-arg PACKAGE_ID=${nugetPackageId} --build-arg ${extraDockerBuildArgument} ./src")
                         }
                         if(registryPublish) {
                             img.push()
