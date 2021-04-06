@@ -3,7 +3,7 @@ import com.freebyTech.BuildConstants
 import com.freebyTech.NugetPushOptionEnum
 import com.freebyTech.ContainerLabel
 
-BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArgument, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '', String dockerFileLocation = './src') 
+BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArgument, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '', String dockerFileLocation = './src', String overrideHelmDirectory = '') 
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
@@ -82,14 +82,20 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
 
                     if(helmBuildChart) 
                     {
-                        withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1"])
+                        def helmDir = imageName
+                        if(overrideHelmDirectory != '') 
+                        {
+                            helmDir = overrideHelmDirectory
+                        }
+
+                        withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "HELM_DIR=${helmDir}"])
                         {
                             // Need registry credentials for agent build operation to setup chart museum connection.
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
                                     usernameVariable: 'REGISTRY_USER', passwordVariable: 'REGISTRY_USER_PASSWORD']])
                             {
                                 sh '''
-                                cd ./deploy/${IMAGE_NAME}
+                                cd ./deploy/${HELM_DIR}
                                 helm chart save . ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 echo ${REGISTRY_USER_PASSWORD} | helm registry login ${REGISTRY_URL} --username ${REGISTRY_USER} --password-stdin
                                 helm chart push ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
