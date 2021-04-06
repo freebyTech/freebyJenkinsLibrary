@@ -2,7 +2,7 @@ import com.freebyTech.BuildInfo
 import com.freebyTech.BuildConstants
 import com.freebyTech.ContainerLabel
 
-void call(BuildInfo buildInfo, String repository, String imageName, String virtualServiceGateway, String virtualServiceHostName, Boolean purgePrevious = false) 
+void call(BuildInfo buildInfo, String repository, String imageName, String virtualServiceGateway, String virtualServiceHostName, Boolean purgePrevious = false, String overrideHelmDirectory = '') 
 {
     String label = new ContainerLabel("deploy", imageName).label
     
@@ -23,7 +23,13 @@ void call(BuildInfo buildInfo, String repository, String imageName, String virtu
             {      
                 container('freeby-agent') 
                 {
-                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "VS_HOSTNAME=${virtualServiceHostName}", "VS_GATEWAY=${virtualServiceGateway}"])
+                    def helmDir = imageName
+                    if(overrideHelmDirectory != '') 
+                    {
+                        helmDir = overrideHelmDirectory
+                    }
+                        
+                    withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "VS_HOSTNAME=${virtualServiceHostName}", "VS_GATEWAY=${virtualServiceGateway}", "HELM_DIR=${helmDir}"])
                     {
                         // Need registry credentials for agent build operation to setup chart museum connection.
                         withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
@@ -35,7 +41,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String virtu
                                 echo ${REGISTRY_USER_PASSWORD} | helm registry login ${REGISTRY_URL} --username ${REGISTRY_USER} --password-stdin
                                 helm chart pull ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 helm chart export ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION} --destination ./deploy
-                                cd ./deploy/${IMAGE_NAME}
+                                cd ./deploy/${HELM_DIR}
                                 set +e
                                 helm delete --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME}                             
                                 helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
@@ -49,7 +55,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String virtu
                                 echo ${REGISTRY_USER_PASSWORD} | helm registry login ${REGISTRY_URL} --username ${REGISTRY_USER} --password-stdin
                                 helm chart pull ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 helm chart export ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION} --destination ./deploy
-                                cd ./deploy/${IMAGE_NAME}
+                                cd ./deploy/${HELM_DIR}
                                 set +e
                                 helm upgrade --install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
                                     --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} --set virtualService.hosts={${VS_HOSTNAME}} --set virtualService.gateways={${VS_GATEWAY}} --debug .
