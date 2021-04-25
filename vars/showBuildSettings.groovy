@@ -1,4 +1,4 @@
-void call(String image, String namespaceList) 
+void call() 
 {
   stage("Show Build Settings")
   {
