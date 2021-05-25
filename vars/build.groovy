@@ -3,7 +3,7 @@ import com.freebyTech.BuildConstants
 import com.freebyTech.NugetPushOptionEnum
 import com.freebyTech.ContainerLabel
 
-BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArgument, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '', String dockerFileLocation = './src', String overrideHelmDirectory = '') 
+BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArguments, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '', String dockerFileLocation = './src', String overrideHelmDirectory = '') 
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
@@ -41,13 +41,13 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                     docker.withRegistry(buildInfo.registry, env.REGISTRY_USER_ID) 
                     {
                         def img
-                        if(extraDockerBuildArgument=='') 
+                        if(extraDockerBuildArguments=='') 
                         {
                             img = docker.build(buildInfo.tag, "--build-arg BUILD_VERSION=${buildInfo.version} --build-arg PACKAGE_ID=${nugetPackageId} ${dockerFileLocation}")
                         }
                         else 
                         {
-                            img = docker.build(buildInfo.tag,"--build-arg BUILD_VERSION=${buildInfo.version} --build-arg PACKAGE_ID=${nugetPackageId} --build-arg ${extraDockerBuildArgument} ${dockerFileLocation}")
+                            img = docker.build(buildInfo.tag,"--build-arg BUILD_VERSION=${buildInfo.version} --build-arg PACKAGE_ID=${nugetPackageId} ${extraDockerBuildArguments} ${dockerFileLocation}")
                         }
                         if(registryPublish) {
                             img.push()
