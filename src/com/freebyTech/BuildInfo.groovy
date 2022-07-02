@@ -35,7 +35,7 @@ class BuildInfo implements Serializable {
             steps.echo 'Publishing to standard docker registry.'
             this.tag = "${repository}/${image}:${this.version}"
             this.agentTag = "freebytech-pub/${script.env.AGENT_IMAGE}"
-            this.regsitry = ''
+            this.registry = ''
         }
         else 
         {
@@ -57,7 +57,7 @@ class BuildInfo implements Serializable {
             steps.echo 'Publishing to standard docker registry.'
             this.tag = "${repository}/${image}:${this.version}"
             this.agentTag = "freebytech-pub/${script.env.AGENT_IMAGE}"
-            this.regsitry = ''
+            this.registry = ''
         }
         else 
         {
