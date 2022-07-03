@@ -60,7 +60,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         {
                             //TODO: In the future support -s options for private nuget server?
                             if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
-                                img.inside("""--entrypoint=''""") {
+                                img.inside("-u 1000:1000") {
                                     sh '''
                                     set +x
                                     dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
@@ -69,7 +69,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 }
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
-                                img.inside("""--entrypoint=''""") {
+                                img.inside("-u 1000:1000") {
                                     sh '''
                                     set +x
                                     dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
