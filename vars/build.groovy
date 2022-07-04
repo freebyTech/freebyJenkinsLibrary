@@ -56,28 +56,28 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 img.push('latest')
                             }
                         }
-                        withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
-                        {
-                            //TODO: In the future support -s options for private nuget server?
-                            if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
-                                img.inside("""--entrypoint=''""") {
-                                    sh '''
-                                    set +x
-                                    dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
-                                    set -x
-                                    '''
-                                }
-                            }
-                            else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
-                                img.inside("""--entrypoint=''""") {
-                                    sh '''
-                                    set +x
-                                    dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
-                                    set -x
-                                    '''
-                                }
-                            }
-                        }             
+                        // withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
+                        // {
+                        //     //TODO: In the future support -s options for private nuget server?
+                        //     if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
+                        //         img.inside("""--entrypoint=''""") {
+                        //             sh '''
+                        //             set +x
+                        //             dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+                        //             set -x
+                        //             '''
+                        //         }
+                        //     }
+                        //     else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
+                        //         img.inside("""--entrypoint=''""") {
+                        //             sh '''
+                        //             set +x
+                        //             dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+                        //             set -x
+                        //             '''
+                        //         }
+                        //     }
+                        // }       
                     }
 
                     if(helmBuildChart) 
@@ -105,6 +105,50 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                     }
                 }
             }         
+        }
+    }
+    if(nugetPushOption == NugetPushOptionEnum.PushRelease || nugetPushOption == NugetPushOptionEnum.PushDebug) {
+        podTemplate( label: label,
+            containers: 
+            [
+                containerTemplate(name: 'nuger-agent', image: buildInfo.tag, ttyEnabled: true, command: 'cat')
+            ], 
+            volumes: 
+            [
+                hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
+            ])
+        {
+            node(label) 
+            {
+                stage('Publish Nuget Package') 
+                {
+                    container('nuget-agent') 
+                    {
+                        withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
+                        {
+                            //TODO: In the future support -s options for private nuget server?
+                            if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
+                                img.inside("""--entrypoint=''""") {
+                                    sh '''
+                                    set +x
+                                    dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+                                    set -x
+                                    '''
+                                }
+                            }
+                            else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
+                                img.inside("""--entrypoint=''""") {
+                                    sh '''
+                                    set +x
+                                    dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+                                    set -x
+                                    '''
+                                }
+                            }
+                        }
+                    }
+                }         
+            }
         }
     }
     return buildInfo
