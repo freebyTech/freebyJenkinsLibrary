@@ -61,14 +61,14 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                             //TODO: In the future support -s options for private nuget server?
                             if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
                                 sh """
-                                    echo 'FROM ${buildInfo.tag}' > ./Dockerfile-push
+                                    echo 'FROM $buildInfo.tag' > ./Dockerfile-push
                                     echo 'dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./Dockerfile-push
                                 """
                                 docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "-f ./Dockerfile-push")
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
                                 sh """
-                                    echo 'FROM ${buildInfo.tag}' > ./Dockerfile-push
+                                    echo 'FROM $buildInfo.tag' > ./Dockerfile-push
                                     echo 'dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./Dockerfile-push
                                 """
                                 docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "-f ./Dockerfile-push")
