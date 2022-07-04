@@ -107,6 +107,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
             }         
         }
     }
+    // Since we can't get docker in docker to function in new GKE cluster with newer Jenkins, spinning up another pod seems the appropriate response.
     if(nugetPushOption == NugetPushOptionEnum.PushRelease || nugetPushOption == NugetPushOptionEnum.PushDebug) {
         podTemplate( label: label,
             containers: 
@@ -128,22 +129,18 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                         {
                             //TODO: In the future support -s options for private nuget server?
                             if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
-                                img.inside("""--entrypoint=''""") {
-                                    sh '''
+                                sh '''
                                     set +x
                                     dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
                                     set -x
-                                    '''
-                                }
+                                '''
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
-                                img.inside("""--entrypoint=''""") {
-                                    sh '''
+                                sh '''
                                     set +x
                                     dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
                                     set -x
-                                    '''
-                                }
+                                '''
                             }
                         }
                     }
