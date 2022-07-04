@@ -56,28 +56,28 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 img.push('latest')
                             }
                         }
-                        // withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
-                        // {
-                        //     //TODO: In the future support -s options for private nuget server?
-                        //     if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
-                        //         img.inside("""--entrypoint=''""") {
-                        //             sh '''
-                        //             set +x
-                        //             dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
-                        //             set -x
-                        //             '''
-                        //         }
-                        //     }
-                        //     else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
-                        //         img.inside("""--entrypoint=''""") {
-                        //             sh '''
-                        //             set +x
-                        //             dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
-                        //             set -x
-                        //             '''
-                        //         }
-                        //     }
-                        // }       
+                        withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
+                        {
+                            //TODO: In the future support -s options for private nuget server?
+                            if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
+                                docker.image(buildInfo.tag).withRun {
+                                    sh '''
+                                    set +x
+                                    dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+                                    set -x
+                                    '''
+                                }
+                            }
+                            else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
+                                docker.image(buildInfo.tag).withRun {
+                                    sh '''
+                                    set +x
+                                    dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+                                    set -x
+                                    '''
+                                }
+                            }
+                        }       
                     }
 
                     if(helmBuildChart) 
@@ -107,39 +107,39 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
             }         
         }
     }
-    // Since we can't get docker in docker to function in new GKE cluster with newer Jenkins, spinning up another pod seems the appropriate response.
-    if(nugetPushOption == NugetPushOptionEnum.PushRelease || nugetPushOption == NugetPushOptionEnum.PushDebug) {
-        label = new ContainerLabel("publish", imageName).label
-        podTemplate( label: label,
-            containers: 
-            [
-                containerTemplate(name: 'nuger-agent', image: buildInfo.tag, ttyEnabled: true, command: 'cat')
-            ])
-        {
-            node(label) 
-            {
-                stage('Publish Nuget Package') 
-                {
-                    container('nuget-agent') 
-                    {
-                        withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
-                        {
-                            //TODO: In the future support -s options for private nuget server?
-                            if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
-                                sh '''
-                                    dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
-                                '''
-                            }
-                            else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
-                                sh '''
-                                    dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
-                                '''
-                            }
-                        }
-                    }
-                }         
-            }
-        }
-    }
+    // // Since we can't get docker in docker to function in new GKE cluster with newer Jenkins, spinning up another pod seems the appropriate response.
+    // if(nugetPushOption == NugetPushOptionEnum.PushRelease || nugetPushOption == NugetPushOptionEnum.PushDebug) {
+    //     label = new ContainerLabel("publish", imageName).label
+    //     podTemplate( label: label,
+    //         containers: 
+    //         [
+    //             containerTemplate(name: 'nuger-agent', image: buildInfo.tag, ttyEnabled: true, command: 'cat')
+    //         ])
+    //     {
+    //         node(label) 
+    //         {
+    //             stage('Publish Nuget Package') 
+    //             {
+    //                 container('nuget-agent') 
+    //                 {
+    //                     withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
+    //                     {
+    //                         //TODO: In the future support -s options for private nuget server?
+    //                         if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
+    //                             sh '''
+    //                                 dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+    //                             '''
+    //                         }
+    //                         else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
+    //                             sh '''
+    //                                 dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json
+    //                             '''
+    //                         }
+    //                     }
+    //                 }
+    //             }         
+    //         }
+    //     }
+    // }
     return buildInfo
 }
