@@ -56,24 +56,24 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 img.push('latest')
                             }
                         }
-                        withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}"])
+                        withEnv(["NUGET_API=${env.NUGET_API_KEY}", "PACKAGE_ID=${nugetPackageId}", "VERSION=${buildInfo.version}", "BUILD_TAG=${buildInfo.tag}"])
                         {
                             //TODO: In the future support -s options for private nuget server?
                             if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
-                                sh """
-                                    mkdir temp-docker
-                                    echo 'FROM $buildInfo.tag' > ./temp-docker/Dockerfile
-                                    echo 'RUN dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./temp-docker/Dockerfile-push
-                                """
-                                // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
+                                sh '''
+                                    mkdir push-to-nuget
+                                    echo "FROM $BUILD_TAG" > ./push-to-nuget/Dockerfile
+                                    echo "RUN dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json" >> ./push-to-nuget/Dockerfile
+                                '''
+                                // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./push-to-nuget")
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
-                                sh """
-                                    mkdir temp-docker
-                                    echo 'FROM $buildInfo.tag' > ./temp-docker/Dockerfile
-                                    echo 'RUN dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./temp-docker/Dockerfile-push
-                                """
-                                // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
+                                sh '''
+                                    mkdir push-to-nuget
+                                    echo "FROM $BUILD_TAG" > ./push-to-nuget/Dockerfile
+                                    echo "RUN dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json" >> .push-to-nuget/Dockerfile
+                                '''
+                                // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./push-to-nuget")
                             }
                         }       
                     }
