@@ -72,7 +72,6 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                     echo 'dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./Dockerfile-push
                                 """
                                 docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "-f ./Dockerfile-push")
-                                }
                             }
                         }       
                     }
