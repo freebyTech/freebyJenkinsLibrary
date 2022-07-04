@@ -64,6 +64,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                     mkdir push-to-nuget
                                     echo "FROM $BUILD_TAG" > ./push-to-nuget/Dockerfile
                                     echo "RUN dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json" >> ./push-to-nuget/Dockerfile
+                                    ./push-to-nuget/Dockerfile
                                 '''
                                 // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./push-to-nuget")
                             }
@@ -71,7 +72,8 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                 sh '''
                                     mkdir push-to-nuget
                                     echo "FROM $BUILD_TAG" > ./push-to-nuget/Dockerfile
-                                    echo "RUN dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json" >> .push-to-nuget/Dockerfile
+                                    echo "RUN dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json" >> ./push-to-nuget/Dockerfile
+                                    cat ./push-to-nuget/Dockerfile
                                 '''
                                 // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./push-to-nuget")
                             }
