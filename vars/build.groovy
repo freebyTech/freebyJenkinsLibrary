@@ -114,10 +114,6 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
             containers: 
             [
                 containerTemplate(name: 'nuger-agent', image: buildInfo.tag, ttyEnabled: true, command: 'cat')
-            ], 
-            volumes: 
-            [
-                hostPathVolume(hostPath: '/var/run/docker.sock', mountPath: '/var/run/docker.sock')
             ])
         {
             node(label) 
