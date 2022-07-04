@@ -109,6 +109,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
     }
     // Since we can't get docker in docker to function in new GKE cluster with newer Jenkins, spinning up another pod seems the appropriate response.
     if(nugetPushOption == NugetPushOptionEnum.PushRelease || nugetPushOption == NugetPushOptionEnum.PushDebug) {
+        label = new ContainerLabel("publish", imageName).label
         podTemplate( label: label,
             containers: 
             [
