@@ -65,7 +65,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                     echo 'FROM $buildInfo.tag' > ./temp-docker/Dockerfile
                                     echo 'RUN dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./temp-docker/Dockerfile-push
                                 """
-                                docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
+                                // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
                                 sh """
@@ -73,7 +73,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                                     echo 'FROM $buildInfo.tag' > ./temp-docker/Dockerfile
                                     echo 'RUN dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./temp-docker/Dockerfile-push
                                 """
-                                docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
+                                // docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
                             }
                         }       
                     }
