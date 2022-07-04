@@ -61,17 +61,19 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                             //TODO: In the future support -s options for private nuget server?
                             if(nugetPushOption == NugetPushOptionEnum.PushRelease) {
                                 sh """
-                                    echo 'FROM $buildInfo.tag' > ./Dockerfile-push
-                                    echo 'dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./Dockerfile-push
+                                    mkdir temp-docker
+                                    echo 'FROM $buildInfo.tag' > ./temp-docker/Dockerfile
+                                    echo 'RUN dotnet nuget push /lib/nuget/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./temp-docker/Dockerfile-push
                                 """
-                                docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "-f ./Dockerfile-push")
+                                docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
                             }
                             else if(nugetPushOption == NugetPushOptionEnum.PushDebug) {
                                 sh """
-                                    echo 'FROM $buildInfo.tag' > ./Dockerfile-push
-                                    echo 'dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./Dockerfile-push
+                                    mkdir temp-docker
+                                    echo 'FROM $buildInfo.tag' > ./temp-docker/Dockerfile
+                                    echo 'RUN dotnet nuget push /lib/nuget_d/$PACKAGE_ID.$VERSION.nupkg -k $NUGET_API -s https://api.nuget.org/v3/index.json' >> ./temp-docker/Dockerfile-push
                                 """
-                                docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "-f ./Dockerfile-push")
+                                docker.image(buildInfo.tag).build("${buildInfo.tag}-p", "./temp-docker")
                             }
                         }       
                     }
