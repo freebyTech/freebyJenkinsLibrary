@@ -19,7 +19,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String virtu
     {
         node(label)
         {
-            stage("Overwrite ${imageName}")
+            stage("Deploy for Istio - ${imageName}")
             {      
                 container('freeby-agent') 
                 {

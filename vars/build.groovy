@@ -31,7 +31,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                 currentBuild.displayName = "# " + buildInfo.version
             }
 
-            stage('Build Image and Publish') 
+            stage("Build Image and Publish - ${env.BRANCH_NAME}") 
             {
                 container('freeby-agent') 
                 {
@@ -104,7 +104,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
         {
             node(label) 
             {
-                stage('Publish Nuget Package') 
+                stage("Publish Nuget Package - ${env.BRANCH_NAME}") 
                 {
                     container('nuget-agent') 
                     {

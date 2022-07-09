@@ -23,7 +23,7 @@ void call(def script, String version, String repository, String imageName, Strin
     {
         node(label)
         {
-            stage("Deploy ${imageName}")
+            stage("Deploy Version - ${imageName}")
             {      
                 container('freeby-agent') 
                 {

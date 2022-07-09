@@ -19,7 +19,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String envFi
     {
         node(label)
         {
-            stage("Overwrite ${imageName}")
+            stage("Deploy - ${imageName}")
             {      
                 container('freeby-agent') 
                 {
