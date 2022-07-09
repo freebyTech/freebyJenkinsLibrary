@@ -81,7 +81,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                             {
                                 sh '''
                                 cd ./deploy/${HELM_DIR}
-                                sed -1 \"s/appVersion: 1.16.0/appVersion: v${APPVERSION}/g\"./Chart.yaml
+                                sed -i \"s/appVersion: 1.16.0/appVersion: v${APPVERSION}/g\"./Chart.yaml
                                 helm chart save . ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
                                 echo ${REGISTRY_USER_PASSWORD} | helm registry login ${REGISTRY_URL} --username ${REGISTRY_USER} --password-stdin
                                 helm chart push ${REGISTRY_URL}/${REPOSITORY}-helm/${IMAGE_NAME}:${APPVERSION}
