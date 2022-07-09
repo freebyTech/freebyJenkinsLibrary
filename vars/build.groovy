@@ -3,7 +3,7 @@ import com.freebyTech.BuildConstants
 import com.freebyTech.NugetPushOptionEnum
 import com.freebyTech.ContainerLabel
 
-BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArguments, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '', String dockerFileLocation = './src', String overrideHelmDirectory = '') 
+BuildInfo call(def script, String versionPrefix, String repository, String imageName, String extraDockerBuildArguments, Boolean registryPublish, Boolean helmBuildChart = false, NugetPushOptionEnum nugetPushOption = NugetPushOptionEnum.NoPush, String nugetPackageId = '', String dockerFileLocation = './src', String overrideHelmDirectory = '', String extraSHCommands = '') 
 {
     BuildInfo buildInfo = new BuildInfo(steps, script)
 
@@ -36,6 +36,13 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                 container('freeby-agent') 
                 {
                     checkout scm
+
+                    if(extraSHCommands != '')
+                    {
+                        dir('.') {
+                            sh "${extraSHCommands}"
+                        }                        
+                    }
 
                     // Use guid of known user for registry security
                     docker.withRegistry(buildInfo.registry, env.REGISTRY_USER_ID) 
