@@ -45,7 +45,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String envFi
                                 set +e
                                 helm delete --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME}                             
                                 helm install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} -f ${envFile} --debug .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} -f ${ENV_FILE} --debug .
                                 set -e
                                 '''
                             } 
@@ -58,7 +58,7 @@ void call(BuildInfo buildInfo, String repository, String imageName, String envFi
                                 cd ./deploy/${HELM_DIR}
                                 set +e
                                 helm upgrade --install --namespace ${NAMESPACE} ${NAMESPACE}-${IMAGE_NAME} --version ${VERSION} --set image.tag=${APPVERSION} \
-                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} -f ${envFile} --debug .
+                                    --set image.repository=${REGISTRY_URL}/${REPOSITORY}/${IMAGE_NAME} -f ${ENV_FILE} --debug .
                                 set -e
                                 '''
                             }
