@@ -73,7 +73,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                             helmDir = overrideHelmDirectory
                         }
 
-                        withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_DIR=${helmDir}"])
+                        withEnv(["APPVERSION=${buildInfo.version}", "VERSION=${buildInfo.semanticVersion}", "REPOSITORY=${repository}", "IMAGE_NAME=${imageName}", "HELM_EXPERIMENTAL_OCI=1", "HELM_DIR=${helmDir}"])
                         {
                             // Need registry credentials for agent build operation to setup chart museum connection.
                             withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: env.REGISTRY_USER_ID,
