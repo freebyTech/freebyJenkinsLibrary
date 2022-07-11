@@ -14,7 +14,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
     podTemplate( label: label,
         containers: 
         [
-            containerTemplate(name: 'freeby-agent', image: buildInfo.agentTag, ttyEnabled: true, command: 'cat', resourceRequestCpu: '400m', resourceRequestMemory: '256Mi')
+            containerTemplate(name: 'freeby-agent', image: buildInfo.agentTag, ttyEnabled: true, command: 'cat')
         ], 
         volumes: 
         [
