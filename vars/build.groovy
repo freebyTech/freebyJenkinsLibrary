@@ -39,7 +39,7 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
 
                     if(extraSHCommands != '')
                     {
-                        withEnv("BUILD_VERSION=${buildInfo.version}") 
+                        withEnv(["BUILD_VERSION=${buildInfo.version}"]) 
                         {
                             dir('.') {
                                 sh "${extraSHCommands}"
