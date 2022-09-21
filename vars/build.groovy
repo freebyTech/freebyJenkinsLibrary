@@ -39,9 +39,12 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
 
                     if(extraSHCommands != '')
                     {
-                        dir('.') {
-                            sh "${extraSHCommands}"
-                        }                        
+                        withEnv("BUILD_VERSION=${buildInfo.version}") 
+                        {
+                            dir('.') {
+                                sh "${extraSHCommands}"
+                            }     
+                        }                                           
                     }
 
                     // Use guid of known user for registry security
