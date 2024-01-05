@@ -25,10 +25,16 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
         {
             stage('Setup Build Settings') 
             {
-                echo '--------------------------------------------------'
-                echo "Building version ${buildInfo.version} for branch ${env.BRANCH_NAME}"
-                echo '--------------------------------------------------'          
-                currentBuild.displayName = "# " + buildInfo.version
+                container('freeby-agent')
+                {
+                    checkout scm
+                    buildInfo.checkForVersionOverrideTags(versionPrefix)
+                    echo '--------------------------------------------------'
+                    echo "Building version ${buildInfo.version} for branch ${env.BRANCH_NAME}"
+                    echo '--------------------------------------------------'          
+                    currentBuild.displayName = "# " + buildInfo.version
+                    buildInfo.pushTag()
+                }
             }
 
             stage("Build Image and Publish - ${env.BRANCH_NAME}") 

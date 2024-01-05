@@ -67,4 +67,28 @@ class BuildInfo implements Serializable {
             this.registry = "https://${script.env.REGISTRY_URL}"
         }        
     }
+
+    def checkForVersionOverrideTags(String versionPrefix) {
+        def lastVersion = sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
+        if (lastVersion.length() > 0) {
+            steps.echo "Existing version tag ${lastVersion} found"
+            lastVersion = lastVersion.substring(1);
+            def lastVersionSplit = lastVersion.tokenize('.')
+            def lastPatchVersion = lastVersionSplit[2]
+            def date = new Date()
+            def verDate = date.format('MMdd')
+            if(verDate.getAt(0) == '0') {
+                verDate = verDate.substring(1)
+            }
+            this.version = "${versionPrefix}.${lastPatchVersion}.${verDate}"
+            this.semanticVersion = "${versionPrefix}.${lastPatchVersion}"
+        }        
+    }
+
+    def pushTag() {
+        steps.echo "Pushing new version tag ${this.version}"
+        sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
+        sh(script:"git push origin v${this.version}")
+    }
+                    
 }
