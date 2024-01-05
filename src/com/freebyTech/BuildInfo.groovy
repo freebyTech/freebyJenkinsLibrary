@@ -69,7 +69,7 @@ class BuildInfo implements Serializable {
     }
 
     def checkForVersionOverrideTags(String versionPrefix) {
-        def lastVersion = sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
+        def lastVersion = script.sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
         if (lastVersion.length() > 0) {
             steps.echo "Existing version tag ${lastVersion} found"
             lastVersion = lastVersion.substring(1);
@@ -87,8 +87,8 @@ class BuildInfo implements Serializable {
 
     def pushTag() {
         steps.echo "Pushing new version tag ${this.version}"
-        sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
-        sh(script:"git push origin v${this.version}")
+        script.sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
+        script.sh(script:"git push origin v${this.version}")
     }
                     
 }
