@@ -72,6 +72,7 @@ class BuildInfo implements Serializable {
         script.sh(script:"git config --global --add safe.directory ${script.pwd()}")
         script.sh(script:"git config --global user.email \"${script.env.GIT_USER_EMAIL}\"")
         script.sh(script:"git config --global user.name \"${script.env.GIT_USER_NAME}\"")
+        // script.sh(returnStdout: true, script: "git fetch origin")
         def lastVersion = script.sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
         if (lastVersion.length() > 0) {
             steps.echo "Existing version tag ${lastVersion} found"
