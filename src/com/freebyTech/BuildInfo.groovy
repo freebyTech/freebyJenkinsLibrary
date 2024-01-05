@@ -69,6 +69,9 @@ class BuildInfo implements Serializable {
     }
 
     def checkForVersionOverrideTags(String versionPrefix) {
+        script.sh(script:"git config --global --add safe.directory ${script.pwd()}")
+        script.sh(script:"git config --global user.email \"${script.env.GIT_USER_EMAIL}\"")
+        script.sh(script:"git config --global user.name \"${script.env.GIT_USER_NAME}\"")
         def lastVersion = script.sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
         if (lastVersion.length() > 0) {
             steps.echo "Existing version tag ${lastVersion} found"
@@ -90,9 +93,6 @@ class BuildInfo implements Serializable {
             steps.echo "Pushing new version tag ${this.version}"
             def originUrl = script.scm.getUserRemoteConfigs()[0].getUrl()
             def fixedOriginUrl = originUrl.replaceAll("https://", "https://${env.GIT_USERNAME}:${env.GIT_PASSWORD}")
-            script.sh(script:"git config --global --add safe.directory ${script.pwd()}")
-            script.sh(script:"git config --global user.email \"${script.env.GIT_USER_EMAIL}\"")
-            script.sh(script:"git config --global user.name \"${script.env.GIT_USER_NAME}\"")
             script.sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
             script.sh(script:"git push ${fixedOriginUrl} v${this.version}")
         }
