@@ -94,7 +94,7 @@ class BuildInfo implements Serializable {
             steps.echo "Pushing new version tag ${this.version} to ${originUrl}"
             def fixedOriginUrl = originUrl.replace("https://", "https://${script.env.GIT_USERNAME}:${script.env.GIT_PASSWORD}@")
             script.sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
-            script.sh(script:"git push ${fixedOriginUrl} v${this.version}", quiet: true)
+            script.sh(script:"git push ${fixedOriginUrl} v${this.version}", returnStatus: false)
             steps.echo 'Pushed...'
         }
     }
