@@ -88,6 +88,8 @@ class BuildInfo implements Serializable {
     def pushTag() {
         steps.echo "Pushing new version tag ${this.version}"
         script.sh(script:"git config --global --add safe.directory ${script.pwd()}")
+        script.sh(script:"git config --global user.email \"${script.env.GIT_USER_EMAIL}\"")
+        script.sh(script:"git config --global user.name \"${script.env.GIT_USER_NAME}\"")
         script.sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
         script.sh(script:"git push origin v${this.version}")
     }
