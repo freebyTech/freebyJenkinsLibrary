@@ -92,9 +92,10 @@ class BuildInfo implements Serializable {
         script.withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: script.env.PRIVATE_GIT_REPO_USER_ID, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
             def originUrl = script.scm.getUserRemoteConfigs()[0].getUrl()
             steps.echo "Pushing new version tag ${this.version} to ${originUrl}"
-            def fixedOriginUrl = originUrl.replace("https://", "https://${script.env.GIT_USERNAME}:${script.env.GIT_PASSWORD}@")
+            def defFixedPassword = script.env.GIT_PASSWORD.replaceAll("@", "%40")
+            def fixedOriginUrl = originUrl.replace("https://", "https://${script.env.GIT_USERNAME}:${defFixedPassword}@")
             script.sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
-            script.sh(script:"git push ${fixedOriginUrl} v${this.version}", returnStatus: false)
+            script.sh(script:"git push ${fixedOriginUrl} v${this.version}", returnStdout: false, returnStatus: false)
             steps.echo 'Pushed...'
         }
     }
