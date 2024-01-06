@@ -27,12 +27,13 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
             {
                 container('freeby-agent')
                 {
-                    checkout ([
-                        $class: 'GitSCM', 
-                        branches: scm.branches, 
-                        extensions: scm.extensions + [[$class: 'CloneOption', noTags: false]], 
-                        userRemoteConfigs: scm.userRemoteConfigs
-                    ])
+                    // checkout ([
+                    //     $class: 'GitSCM', 
+                    //     branches: scm.branches, 
+                    //     extensions: scm.extensions + [[$class: 'CloneOption', noTags: false]], 
+                    //     userRemoteConfigs: scm.userRemoteConfigs
+                    // ])
+                    checkout scm
                     buildInfo.checkForVersionOverrideTags(versionPrefix)
                     echo '--------------------------------------------------'
                     echo "Building version ${buildInfo.version} for branch ${env.BRANCH_NAME}"

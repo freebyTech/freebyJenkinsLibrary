@@ -82,7 +82,9 @@ class BuildInfo implements Serializable {
                 steps.echo "Existing version tag ${lastVersion} found"
                 lastVersion = lastVersion.substring(1);
                 def lastVersionSplit = lastVersion.tokenize('.')
-                def lastPatchVersion = lastVersionSplit[2]
+                def lastPatchVersionInt = lastVersionSplit[2].toInteger()
+                lastPatchVersionInt++
+                def lastPatchVersion = lastPatchVersionInt.toString()
                 def date = new Date()
                 def verDate = date.format('MMdd')
                 if(verDate.getAt(0) == '0') {
@@ -99,9 +101,10 @@ class BuildInfo implements Serializable {
             def originUrl = this.getOriginUrl()
             steps.echo "Pushing new version tag ${this.version} to ${originUrl}"
             def fixedOriginUrl = this.getOriginWithUserUrl(originUrl)
+            script.sh(returnStdout: true, script: "git remote set-url origin ${fixedOriginUrl}")
+            
             script.sh(script:"git tag -a v${this.version} -m \"Version ${this.version}\"")
-            script.sh(script:"git push ${fixedOriginUrl} v${this.version}", returnStdout: false, returnStatus: false)
-            steps.echo 'Pushed...'
+            script.sh(script:"git push origin v${this.version}")
         }
     }
 
