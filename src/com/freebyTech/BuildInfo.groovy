@@ -69,27 +69,29 @@ class BuildInfo implements Serializable {
     }
 
     def checkForVersionOverrideTags(String versionPrefix) {
-        script.sh(script:"git config --global --add safe.directory ${script.pwd()}")
-        script.sh(script:"git config --global user.email \"${script.env.GIT_USER_EMAIL}\"")
-        script.sh(script:"git config --global user.name \"${script.env.GIT_USER_NAME}\"")
-        def originUrl = this.getOriginUrl()
-        def fixedOriginUrl = this.getOriginWithUserUrl(originUrl)
-        script.sh(returnStdout: true, script: "git remote --set-url origin ${fixedOriginUrl}")
-        script.sh(returnStdout: true, script: "git fetch origin --tags")
-        def lastVersion = script.sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
-        if (lastVersion.length() > 0) {
-            steps.echo "Existing version tag ${lastVersion} found"
-            lastVersion = lastVersion.substring(1);
-            def lastVersionSplit = lastVersion.tokenize('.')
-            def lastPatchVersion = lastVersionSplit[2]
-            def date = new Date()
-            def verDate = date.format('MMdd')
-            if(verDate.getAt(0) == '0') {
-                verDate = verDate.substring(1)
+        script.withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: script.env.PRIVATE_GIT_REPO_USER_ID, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
+            script.sh(script:"git config --global --add safe.directory ${script.pwd()}")
+            script.sh(script:"git config --global user.email \"${script.env.GIT_USER_EMAIL}\"")
+            script.sh(script:"git config --global user.name \"${script.env.GIT_USER_NAME}\"")
+            def originUrl = this.getOriginUrl()
+            def fixedOriginUrl = this.getOriginWithUserUrl(originUrl)
+            script.sh(returnStdout: true, script: "git remote --set-url origin ${fixedOriginUrl}")
+            script.sh(returnStdout: true, script: "git fetch origin --tags")
+            def lastVersion = script.sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
+            if (lastVersion.length() > 0) {
+                steps.echo "Existing version tag ${lastVersion} found"
+                lastVersion = lastVersion.substring(1);
+                def lastVersionSplit = lastVersion.tokenize('.')
+                def lastPatchVersion = lastVersionSplit[2]
+                def date = new Date()
+                def verDate = date.format('MMdd')
+                if(verDate.getAt(0) == '0') {
+                    verDate = verDate.substring(1)
+                }
+                this.version = "${versionPrefix}.${lastPatchVersion}.${verDate}"
+                this.semanticVersion = "${versionPrefix}.${lastPatchVersion}"
             }
-            this.version = "${versionPrefix}.${lastPatchVersion}.${verDate}"
-            this.semanticVersion = "${versionPrefix}.${lastPatchVersion}"
-        }        
+        }
     }
 
     def pushTag() {
