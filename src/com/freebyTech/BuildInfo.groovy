@@ -68,7 +68,7 @@ class BuildInfo implements Serializable {
         }        
     }
 
-    def checkForVersionOverrideTags(String versionPrefix) {
+    def checkForVersionOverrideTags(String versionPrefix, String repository, String image) {
         script.withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: script.env.PRIVATE_GIT_REPO_USER_ID, usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD']]) {
             script.sh(script:"git config --global --add safe.directory ${script.pwd()}")
             script.sh(script:"git config --global user.email \"${script.env.GIT_USER_EMAIL}\"")
@@ -79,7 +79,7 @@ class BuildInfo implements Serializable {
             script.sh(returnStdout: true, script: "git fetch origin --tags")
             def lastVersion = script.sh(returnStdout: true, script: "echo \$(git tag --sort=-creatordate -l 'v${versionPrefix}.*' | head -1)").trim()
             if (lastVersion.length() > 0) {
-                steps.echo "Existing version tag ${lastVersion} found"
+                steps.echo "Existing version tag ${lastVersion} found, overriding to new version built from tag"
                 lastVersion = lastVersion.substring(1);
                 def lastVersionSplit = lastVersion.tokenize('.')
                 def lastPatchVersionInt = lastVersionSplit[2].toInteger()
@@ -92,6 +92,8 @@ class BuildInfo implements Serializable {
                 }
                 this.version = "${versionPrefix}.${lastPatchVersion}.${verDate}"
                 this.semanticVersion = "${versionPrefix}.${lastPatchVersion}"
+                steps.echo "Publishing to registry ${script.env.REGISTRY_URL}"
+                this.tag = "${script.env.REGISTRY_URL}/${repository}/${image}:${this.version}"
             }
         }
     }
