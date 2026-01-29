@@ -46,8 +46,8 @@ BuildInfo call(def script, String versionPrefix, String repository, String image
                     if(extraSHCommands != '')
                     {
                         dir('.') {
-                            sh extraSHCommands.replace('${BUILD_VERSION}', "${buildInfo.version}")
-                        }                                   
+                            sh extraSHCommands.replace('${BUILD_VERSION}', "${buildInfo.version}").replace('${SEMANTIC_VERSION}', "${buildInfo.semanticVersion}")
+                        }
                     }
 
                     // Use guid of known user for registry security
